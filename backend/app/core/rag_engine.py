@@ -105,12 +105,12 @@ class RAGEngine:
         )
 
         results = self.vector_db.search(question)
-
         if not results["documents"]:
             return {
-                "answer": "I'm sorry, that information is not in this document.",
+                "answer": "I'm sorry, I couldn't find any information regarding that in the provided documents. Feel free to ask something else!",
                 "sources": [],
             }
+
 
         context = "\n\n".join(results["documents"])
 

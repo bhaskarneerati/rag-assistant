@@ -1,0 +1,280 @@
+:root {
+  --rag-primary: #6366f1;
+  --rag-primary-hover: #4f46e5;
+  --rag-bg-dark: #0f172a;
+  --rag-bg-light: #f8fafc;
+  --rag-text-main: #1e293b;
+  --rag-text-muted: #64748b;
+  --rag-glass-bg: rgba(255, 255, 255, 0.9);
+  --rag-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --rag-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+#rag-widget-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: var(--rag-primary);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: var(--rag-shadow-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  outline: none;
+}
+
+#rag-widget-button:hover {
+  transform: scale(1.1) rotate(5deg);
+  background: var(--rag-primary-hover);
+}
+
+#rag-widget-button svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+#rag-widget-container {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 380px;
+  height: 600px;
+  max-height: calc(100vh - 120px);
+  background: var(--rag-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: var(--rag-shadow-lg);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right;
+}
+
+#rag-widget-container.hidden {
+  display: flex;
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
+  pointer-events: none;
+}
+
+.rag-header {
+  padding: 20px;
+  background: var(--rag-bg-dark);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rag-header-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.rag-header-title span {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rag-header-status {
+  font-size: 12px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rag-header-status::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+#rag-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+#rag-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#rag-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+#rag-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#rag-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.rag-message {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: rag-fade-in 0.3s ease-out;
+}
+
+@keyframes rag-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Typing Indicator Animation */
+.typing span {
+  width: 4px;
+  height: 4px;
+  background: var(--rag-text-muted);
+  border-radius: 50%;
+  animation: rag-typing 1.4s infinite both;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes rag-typing {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.rag-message.user {
+  align-self: flex-end;
+  background: var(--rag-primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.rag-message.assistant {
+  align-self: flex-start;
+  background: white;
+  color: var(--rag-text-main);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.rag-input-container {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#rag-input {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+#rag-input:focus {
+  border-color: var(--rag-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+#rag-send-btn {
+  background: var(--rag-primary);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+#rag-send-btn:hover {
+  background: var(--rag-primary-hover);
+  transform: translateY(-1px);
+}
+
+#rag-send-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Markdown styling in messages */
+.rag-message h2,
+.rag-message h3,
+.rag-message h4 {
+  margin: 8px 0 4px 0;
+}
+
+.rag-message ul {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
+.rag-message code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}

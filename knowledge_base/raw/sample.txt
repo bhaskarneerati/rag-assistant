@@ -1,0 +1,4 @@
+This is a sample document for the RAG Assistant.
+It contains some basic information to test the ingestion and retrieval process.
+RAG stands for Retrieval-Augmented Generation.
+It combines a retrieval system with a generative model to provide accurate answers based on specific documents.

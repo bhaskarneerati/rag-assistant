@@ -1,3 +1,9 @@
+"""
+Prompt templates for the RAG Assistant.
+
+This module contains the system prompts and templates used by the LLM
+ to ensure consistent, grounded, and professional responses.
+"""
 SYSTEM_PROMPT = """
 You are a professional research assistant.
 

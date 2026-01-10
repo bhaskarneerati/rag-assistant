@@ -1,3 +1,10 @@
+"""
+LLM provider module for the RAG Assistant.
+
+This module provides a factory function to initialize and return a LangChain
+Chat model based on the available environment variables. It supports OpenAI,
+Groq, and Google Generative AI (Gemini) as providers.
+"""
 import os
 from dotenv import load_dotenv
 
@@ -10,8 +17,21 @@ load_dotenv()
 
 def get_llm():
     """
-    LLM factory.
-    Selects provider based on available environment variables.
+    Factory function to create and return an LLM instance.
+
+    The function checks for environment variables in the following order of priority:
+    1. OpenAI (OPENAI_API_KEY)
+    2. Groq (GROQ_API_KEY)
+    3. Google Gemini (GOOGLE_API_KEY)
+
+    It uses the model specified in the corresponding environment variable (e.g., OPENAI_MODEL)
+     or a default model if not specified. Temperature is set to 0.0 for consistent results.
+
+    Returns:
+        BaseChatModel: A LangChain-compatible chat model instance.
+
+    Raises:
+        RuntimeError: If no supported LLM API keys are found in the environment.
     """
 
     if os.getenv("OPENAI_API_KEY"):

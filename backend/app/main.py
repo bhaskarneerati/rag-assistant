@@ -1,3 +1,9 @@
+"""
+Main entry point for the RAG Assistant FastAPI application.
+
+This module initializes the FastAPI app, configures CORS middleware for local development,
+and includes the API routers for health checks, chat functionality, and document ingestion.
+"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

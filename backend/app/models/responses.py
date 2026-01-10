@@ -1,8 +1,22 @@
+"""
+Response models for the RAG Assistant API.
+
+This module defines the Pydantic models used to structure the JSON responses
+returned by the API endpoints.
+"""
 from typing import List
 from pydantic import BaseModel, Field
 
 
 class ChatResponse(BaseModel):
+    """
+    Data model for the assistant's chat response.
+
+    Attributes:
+        session_id (str): The unique identifier for the current chat session.
+        answer (str): The AI-generated answer.
+        sources (List[str]): A list of document filenames used as context for the answer.
+    """
     session_id: str = Field(
         ...,
         description="Session identifier for the chat",

@@ -1,3 +1,10 @@
+"""
+Core RAG (Retrieval-Augmented Generation) engine for the AI Assistant.
+
+This module encapsulates the main logic for document ingestion, vector search,
+and LLM-based answer generation. It acts as the bridge between the retrieval
+system (VectorDB) and the generation system (LLM).
+"""
 import os
 import re
 from typing import Dict, List
@@ -10,8 +17,16 @@ from app.logging.logger import StructuredLogger
 
 def format_for_chat(answer: str) -> str:
     """
-    Convert markdown-style LLM output into
-    clean chat-friendly text.
+    Cleans and formats markdown LLM output for a better user experience in chat UI.
+
+    This function removes excessive markdown headers, converts headers to plain text,
+    strips out bold/italic styling, and normalizes bullet points.
+
+    Args:
+        answer (str): The raw output from the LLM.
+
+    Returns:
+        str: The cleaned and formatted chat message.
     """
 
     if not answer:
@@ -51,20 +66,33 @@ def format_for_chat(answer: str) -> str:
 
 class RAGEngine:
     """
-    Core RAG logic.
-    - No FastAPI imports
-    - No session logic
-    - Pure retrieval + generation
+    Orchestrates the Retrieval-Augmented Generation process.
+
+    This class handles:
+    1. Ingesting raw documents into the vector database.
+    2. Querying the vector database for relevant context.
+    3. Constructing prompts and generating answers using an LLM.
+    4. Logging events for monitoring and debugging.
     """
 
     def __init__(self):
+        """
+        Initializes the RAGEngine with an LLM instance, a VectorDB instance,
+        and a structured logger.
+        """
         self.llm = get_llm()
         self.vector_db = VectorDB()
         self.logger = StructuredLogger(component="rag_engine")
 
     def ingest(self) -> Dict[str, int]:
         """
-        Load documents from knowledge_base/raw and index them.
+        Loads local documents and indexes them in the vector database.
+
+        Scans the 'knowledge_base/raw' directory for .txt files, reads their content,
+        and adds them to ChromaDB.
+
+        Returns:
+            Dict[str, int]: A dictionary with counts of 'documents' and 'chunks' processed.
         """
         base_path = "knowledge_base/raw"
         documents = []
@@ -96,7 +124,22 @@ class RAGEngine:
 
     def query(self, question: str, session_id: str) -> Dict[str, List[str]]:
         """
-        Query vector DB + LLM.
+        Processes a user question and returns an AI-generated answer based on retrieved context.
+
+        This method performs the following steps:
+        1. Logs the query event.
+        2. Searches the vector database for context relevant to the question.
+        3. If no context is found, returns a standard "not found" message.
+        4. If context is found, formats a prompt and invokes the LLM.
+        5. Formats the LLM output and extracts source information.
+        6. Logs the completion event and returns the result.
+
+        Args:
+            question (str): The user's question.
+            session_id (str): The ID of the current session for logging.
+
+        Returns:
+            Dict[str, List[str]]: A dictionary containing the 'answer' and a list of 'sources'.
         """
         self.logger.event(
             "query_received",

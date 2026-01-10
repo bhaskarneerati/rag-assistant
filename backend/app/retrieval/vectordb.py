@@ -1,3 +1,10 @@
+"""
+Vector database management module for the RAG Assistant.
+
+This module provides a wrapper around ChromaDB for storing and retrieving
+document embeddings. It handles model initialization, document chunking,
+idempotent ingestion, and semantic search.
+"""
 import os
 from typing import List, Dict, Any
 
@@ -11,10 +18,32 @@ from app.logging.logger import StructuredLogger
 
 class VectorDB:
     """
-    ChromaDB wrapper for document storage and retrieval.
+    A class to interact with a persistent ChromaDB instance.
+
+    This class encapsulates all vector database operations, including:
+    - Initializing the local embedding model (sentence-transformers).
+    - Managing a persistent collection of document chunks.
+    - Handling document ingestion with duplicate prevention.
+    - Performing semantic searches to find relevant context for user queries.
+
+    Attributes:
+        collection_name (str): The name of the ChromaDB collection.
+        persist_path (str): The file path where ChromaDB persists data.
+        embedding_model_name (str): The name of the HuggingFace model used for embeddings.
+        embeddings (HuggingFaceEmbeddings): The initialized embedding model instance.
+        client (chromadb.PersistentClient): The ChromaDB client.
+        collection (chromadb.Collection): The active collection object.
+        splitter (RecursiveCharacterTextSplitter): Utility for chunking text before indexing.
+        logger (StructuredLogger): Logger for tracking DB operations.
     """
 
     def __init__(self):
+        """
+        Initializes the VectorDB with configuration from environment variables.
+
+        Sets up the embedding model (using CPU, CUDA, or MPS), initializes the
+        persistent ChromaDB client, and prepares the document splitter.
+        """
         self.logger = StructuredLogger(component="vectordb")
 
         self.collection_name = os.getenv("CHROMA_COLLECTION_NAME", "rag_docs")
@@ -57,9 +86,17 @@ class VectorDB:
 
     def add_documents(self, documents: List[Dict[str, Any]]) -> int:
         """
-        Chunk and insert documents into Chroma.
-        Idempotent: skips chunks that already exist.
-        Returns number of NEW chunks added.
+        Chunks and inserts multiple documents into the vector database.
+
+        This method is idempotent: it checks for existing chunk IDs before inserting
+        to avoid duplicates. It only generates embeddings for new chunks.
+
+        Args:
+            documents (List[Dict[str, Any]]): A list of dictionaries, where each dict
+                contains 'id' (filename), 'text' (content), and 'metadata'.
+
+        Returns:
+            int: The total number of new chunks added to the collection.
         """
 
         total_chunks_added = 0
@@ -117,7 +154,15 @@ class VectorDB:
 
     def search(self, query: str, n_results: int = 3) -> Dict[str, Any]:
         """
-        Semantic search.
+        Performs a semantic search to find the most relevant document chunks.
+
+        Args:
+            query (str): The search query (user's question).
+            n_results (int): The number of top results to return.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing lists of 'documents',
+                            'metadatas', and 'distances' for the top matches.
         """
         query_embedding = self.embeddings.embed_query(query)
 

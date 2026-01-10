@@ -63,7 +63,7 @@ graph TD
 ### 1. Environment Setup
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/bhaskarneerati/rag-assistant.git
 cd rag-assistant
 
 # Create & activate virtual environment

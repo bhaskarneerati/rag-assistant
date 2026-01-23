@@ -1,9 +1,7 @@
 // ==============================
 // Configuration
 // ==============================
-// For production use your Render URL: "https://rag-assistant.onrender.com/chat"
-// For local testing use: "http://localhost:8000/chat"
-const API_ENDPOINT = "https://rag-assistant.onrender.com/chat";
+const API_ENDPOINT = "http://localhost:8000/chat/";
 
 // ==============================
 // State

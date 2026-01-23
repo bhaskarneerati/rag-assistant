@@ -151,12 +151,12 @@ cython_debug/
 # Project specific
 backend/logs/*.jsonl
 backend/logs/*.log
-# backend/chroma_db/  <-- Allowed for production hosting deployment
+backend/chroma_db/
 backend/chats/
 
-# Knowledge Base (Allowed for production hosting deployment)
-# knowledge_base/raw/*
-# !knowledge_base/raw/sample.txt
+# Knowledge Base (Only sample.txt is allowed)
+knowledge_base/raw/*
+!knowledge_base/raw/sample.txt
 
 # IDEs
 .vscode/

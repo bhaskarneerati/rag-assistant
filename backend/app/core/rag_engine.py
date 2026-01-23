@@ -162,10 +162,24 @@ class RAGEngine:
             question=question,
         )
 
-        response = self.llm.invoke(prompt)
+        try:
+            response = self.llm.invoke(prompt)
+            raw_answer = response.content.strip()
+            answer = format_for_chat(raw_answer)
+        except Exception as e:
+            error_msg = str(e).lower()
+            if "rate_limit" in error_msg or "429" in error_msg or "quota" in error_msg:
+                answer = "⚠️ I've hit my API rate limit for the moment. Please try again in a few minutes."
+            else:
+                answer = "⚠️ I encountered an error while generating an answer. Please try again later."
+            
+            self.logger.event(
+                "llm_error",
+                session_id=session_id,
+                error=str(e)
+            )
+            return {"answer": answer, "sources": []}
 
-        raw_answer = response.content.strip()
-        answer = format_for_chat(raw_answer)
         sources = list(
             {meta["source"] for meta in results["metadatas"]}
         )

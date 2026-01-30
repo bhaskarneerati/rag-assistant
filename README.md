@@ -17,7 +17,7 @@ The RAG Assistant allows you to chat with your documents. It uses advanced vecto
 - 💬 **Contextual Chat**: Maintains session-based history for follow-up questions.
 - 🎨 **Premium UI**: Modern, glassmorphic floating widget with typing indicators.
 - ⚡ **Scalable Backend**: Built with FastAPI for high-performance async processing.
-- 📊 **Observability**: Structured JSON logging for monitoring and debugging.
+- 📊 **Advanced Observability**: Admin Dashboard to visualize retrieved context chunks and LLM prompts.
 - 🛠️ **Developer Friendly**: Easy setup, clean code, and fully runnable locally.
 
 ---
@@ -124,11 +124,25 @@ python scripts/reset_db.py
 
 ---
 
+- 📊 **Advanced Observability**: Structured JSON logging with an Admin Dashboard to visualize retrieved context chunks and LLM prompts.
+
+---
+
+## 📊 Admin Dashboard
+The project includes a built-in Admin Dashboard for developers to monitor and debug sessions in real-time.
+- **Path**: `frontend/dashboard/index.html` (Open in browser)
+- **Features**:
+  - View full chat history per session.
+  - **Context Visualization**: Inspect the exact document chunks retrieved for every user question.
+  - **Deep Debugging**: Filter system logs by specific user interactions to trace LLM behavior.
+
+---
+
 ## ⚖️ Performance & Logs
 The system generates structured logs in `backend/logs/`. You can monitor:
-- `rag_engine.jsonl`: Prompt construction and LLM usage.
+- `rag_engine.jsonl`: Prompt construction, **retrieved context chunks**, and LLM usage.
 - `vectordb.jsonl`: Search performance and similarity scores.
-- `session_manager.jsonl`: User interaction patterns.
+- `session_manager.jsonl`: User interaction patterns and session lifecycle.
 
 ---
 

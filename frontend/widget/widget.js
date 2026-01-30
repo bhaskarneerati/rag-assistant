@@ -1,7 +1,7 @@
 // ==============================
 // Configuration
 // ==============================
-const API_ENDPOINT = `${window.location.origin}/chat/`;
+const API_ENDPOINT = `http://localhost:8000/chat/`;
 
 // ==============================
 // State

@@ -112,7 +112,6 @@ class RAGEngine:
                         )
 
         chunks = self.vector_db.add_documents(documents)
-        documents_count = len(documents),
 
         self.logger.event(
             "ingestion_complete",
@@ -142,26 +141,39 @@ class RAGEngine:
             Dict[str, List[str]]: A dictionary containing the 'answer' and a list of 'sources'.
         """
         self.logger.event(
-            "query_received",
+            "user_question_received",
             session_id=session_id,
             question=question,
         )
 
-        results = self.vector_db.search(question)
+        self.logger.event("rag_search_started", session_id=session_id)
+        results = self.vector_db.search(question, session_id=session_id)
+        
         if not results["documents"]:
+            self.logger.event(
+                "no_context_found",
+                session_id=session_id,
+                message="Vector search returned no relevant documents."
+            )
             return {
                 "answer": "I'm sorry, I couldn't find any information regarding that in the provided documents. Feel free to ask something else!",
                 "sources": [],
             }
 
-
         context = "\n\n".join(results["documents"])
+        self.logger.event(
+            "context_retrieved",
+            session_id=session_id,
+            chunk_count=len(results["documents"]),
+            chunks=results["documents"],
+        )
 
         prompt = SYSTEM_PROMPT.format(
             context=context,
             question=question,
         )
 
+        self.logger.event("llm_invocation_started", session_id=session_id)
         response = self.llm.invoke(prompt)
 
         raw_answer = response.content.strip()
@@ -171,9 +183,15 @@ class RAGEngine:
         )
 
         self.logger.event(
-            "query_answered",
+            "answer_generated",
             session_id=session_id,
             sources=sources,
+            full_answer=answer,
+        )
+
+        self.logger.event(
+            "bot_waiting_for_input",
+            session_id=session_id,
         )
 
         return {"answer": answer, "sources": sources}

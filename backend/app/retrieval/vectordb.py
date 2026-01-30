@@ -152,18 +152,25 @@ class VectorDB:
 
         return total_chunks_added
 
-    def search(self, query: str, n_results: int = 3) -> Dict[str, Any]:
+    def search(self, query: str, n_results: int = 3, session_id: str | None = None) -> Dict[str, Any]:
         """
         Performs a semantic search to find the most relevant document chunks.
 
         Args:
             query (str): The search query (user's question).
             n_results (int): The number of top results to return.
+            session_id (str, optional): The session ID for logging.
 
         Returns:
             Dict[str, Any]: A dictionary containing lists of 'documents',
                             'metadatas', and 'distances' for the top matches.
         """
+        self.logger.event(
+            "search_initiated",
+            session_id=session_id,
+            query=query[:100] + ("..." if len(query) > 100 else ""),
+        )
+
         query_embedding = self.embeddings.embed_query(query)
 
         results = self.collection.query(
@@ -173,7 +180,18 @@ class VectorDB:
         )
 
         if not results or not results.get("documents"):
+            self.logger.event(
+                "search_completed",
+                session_id=session_id,
+                results_count=0,
+            )
             return {"documents": [], "metadatas": [], "distances": []}
+
+        self.logger.event(
+            "search_completed",
+            session_id=session_id,
+            results_count=len(results["documents"][0]),
+        )
 
         return {
             "documents": results["documents"][0],

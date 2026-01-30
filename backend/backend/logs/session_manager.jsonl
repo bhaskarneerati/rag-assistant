@@ -1,0 +1,5 @@
+{"timestamp": "2026-01-30T12:29:31.956+05:30", "component": "session_manager", "event": "new_session", "session_id": "7f2670cb-d2cf-4593-addd-364835c9bf49"}
+{"timestamp": "2026-01-30T12:34:02.899+05:30", "component": "session_manager", "event": "new_session", "session_id": "db209967-240b-4392-94f9-1f47fc5ac900"}
+{"timestamp": "2026-01-30T13:04:59.736+05:30", "component": "session_manager", "event": "new_session_id_generated", "session_id": "259e1d81-587f-4405-b33f-885da58ef430"}
+{"timestamp": "2026-01-30T13:04:59.738+05:30", "component": "session_manager", "event": "session_initialized", "session_id": "259e1d81-587f-4405-b33f-885da58ef430", "message": "User clicked the bot icon and session was created."}
+{"timestamp": "2026-01-30T13:04:59.738+05:30", "component": "session_manager", "event": "bot_waiting_for_input", "session_id": "259e1d81-587f-4405-b33f-885da58ef430"}

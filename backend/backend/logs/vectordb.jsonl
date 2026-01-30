@@ -1,0 +1,18 @@
+{"timestamp": "2026-01-30T12:27:30.480+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T12:27:34.048+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T12:27:45.546+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T12:27:49.588+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T12:34:02.915+05:30", "component": "vectordb", "event": "search_initiated", "session_id": "db209967-240b-4392-94f9-1f47fc5ac900", "query": "Third message."}
+{"timestamp": "2026-01-30T12:34:07.638+05:30", "component": "vectordb", "event": "search_completed", "session_id": "db209967-240b-4392-94f9-1f47fc5ac900", "results_count": 0}
+{"timestamp": "2026-01-30T12:57:49.736+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T12:57:53.647+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:04:30.637+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:04:34.792+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:05:07.530+05:30", "component": "vectordb", "event": "search_initiated", "session_id": "259e1d81-587f-4405-b33f-885da58ef430", "query": "Tell me about quantum computing principles with bullet points"}
+{"timestamp": "2026-01-30T13:05:08.911+05:30", "component": "vectordb", "event": "search_completed", "session_id": "259e1d81-587f-4405-b33f-885da58ef430", "results_count": 0}
+{"timestamp": "2026-01-30T13:15:33.460+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:15:38.136+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:15:50.277+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:15:54.130+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:19:01.716+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}
+{"timestamp": "2026-01-30T13:19:05.452+05:30", "component": "vectordb", "event": "vectordb_initialized", "collection": "rag_docs", "device": "mps"}

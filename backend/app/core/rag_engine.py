@@ -112,7 +112,6 @@ class RAGEngine:
                         )
 
         chunks = self.vector_db.add_documents(documents)
-        documents_count = len(documents),
 
         self.logger.event(
             "ingestion_complete",
@@ -166,6 +165,7 @@ class RAGEngine:
             "context_retrieved",
             session_id=session_id,
             chunk_count=len(results["documents"]),
+            chunks=results["documents"],
         )
 
         prompt = SYSTEM_PROMPT.format(

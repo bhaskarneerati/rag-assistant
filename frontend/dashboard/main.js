@@ -150,12 +150,40 @@ function renderDebugLogs(logs) {
         // Extract metadata
         const { timestamp, component, event, session_id, ...data } = log;
 
+        let dataHtml = "";
+
+        // Handle chunks specially if they exist
+        if (data.chunks && Array.isArray(data.chunks)) {
+            const { chunks, ...otherData } = data;
+
+            // Render other metadata first
+            if (Object.keys(otherData).length > 0) {
+                const jsonStr = JSON.stringify(otherData, null, 2).trim();
+                dataHtml += `<div class="event-data subgroup">${jsonStr}</div>`;
+            }
+
+            // Render chunks with a nice label and styling
+            dataHtml += `<div class="chunks-container">`;
+            chunks.forEach((chunk, i) => {
+                dataHtml += `
+                    <div class="chunk-item">
+                        <div class="chunk-label">Chunk ${i + 1}</div>
+                        <div class="chunk-text">${chunk.trim()}</div>
+                    </div>
+                `;
+            });
+            dataHtml += `</div>`;
+        } else {
+            const jsonStr = JSON.stringify(data, null, 2).trim();
+            dataHtml = `<div class="event-data">${jsonStr}</div>`;
+        }
+
         tile.innerHTML = `
       <div class="event-header">
         <span class="event-name">${event} <span class="comp-tag">[${component}]</span></span>
         <span class="event-time">${formatTimeOnly(timestamp)}</span>
       </div>
-      <div class="event-data">${JSON.stringify(data, null, 2)}</div>
+      ${dataHtml}
     `;
         debugEvents.appendChild(tile);
     });
@@ -184,12 +212,37 @@ function formatTimeOnly(isoStr) {
 
 function formatMarkdown(text) {
     if (!text) return "";
-    // Simple markdown-ish formatter
-    return text
-        .replace(/\n/g, "<br/>")
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/•\s+(.*?)(?=<br\/>|$)/g, "<li>$1</li>")
-        .replace(/(<li>.*?<\/li>)+/g, "<ul>$&</ul>");
+
+    // 0. Preliminary cleanup - ensure list symbols are consistent
+    let html = text.trim();
+
+    // 1. Convert bullet points and preserve headers
+    html = html
+        .replace(/•\s+(.*?)(?=\n|•|$)/g, '<li>$1</li>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // 2. Wrap consecutive <li> into <ul>
+    html = html.replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>');
+
+    // 3. Handle structure and paragraphs
+    // Collapse 3+ newlines, then split by 2 newlines for paragraphs
+    html = html.replace(/\n{3,}/g, '\n\n');
+
+    const parts = html.split('\n\n');
+    const formattedParts = parts.map(part => {
+        if (part.startsWith('<ul>')) return part;
+        return `<p>${part.replace(/\n/g, '<br/>')}</p>`;
+    });
+
+    html = formattedParts.join('');
+
+    // Final cleanup of redundant markers
+    return html
+        .replace(/<p><\/p>/g, '')
+        .replace(/<p><br\/>/g, '<p>')
+        .replace(/<br\/><\/p>/g, '</p>')
+        .replace(/<p><ul>/g, '<ul>')
+        .replace(/<\/ul><\/p>/g, '</ul>');
 }
 
 // Initial load

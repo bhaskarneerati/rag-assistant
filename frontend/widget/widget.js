@@ -70,15 +70,38 @@ ready(() => {
 
   function formatResponse(text) {
     if (!text) return "";
-    return text
+
+    let html = text.trim();
+
+    // 1. Headers, Bold, and Lists
+    html = html
       .replace(/^### (.*$)/gim, "<h4>$1</h4>")
       .replace(/^## (.*$)/gim, "<h3>$1</h3>")
       .replace(/^# (.*$)/gim, "<h2>$1</h2>")
       .replace(/^\* (.*$)/gim, "<li>$1</li>")
-      .replace(/(<li>.*<\/li>)/gims, "<ul>$1</ul>")
+      .replace(/^• (.*$)/gim, "<li>$1</li>")
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/`(.*?)`/g, "<code>$1</code>")
-      .replace(/\n/g, "<br/>");
+      .replace(/`(.*?)`/g, "<code>$1</code>");
+
+    // 2. Wrap <li> in <ul>
+    html = html.replace(/(<li>.*?<\/li>)+/g, "<ul>$&</ul>");
+
+    // 3. Spacing / Paragraphs
+    html = html.replace(/\n{3,}/g, "\n\n");
+    const parts = html.split("\n\n");
+    const formattedParts = parts.map(part => {
+      if (part.startsWith("<h") || part.startsWith("<ul>")) return part;
+      return `<p>${part.replace(/\n/g, "<br/>")}</p>`;
+    });
+
+    html = formattedParts.join("");
+
+    return html
+      .replace(/<p><\/p>/g, "")
+      .replace(/<p><ul>/g, "<ul>")
+      .replace(/<\/ul><\/p>/g, "</ul>")
+      .replace(/<p><h4>/g, "<h4>")
+      .replace(/<\/h4><\/p>/g, "</h4>");
   }
 
   function sendMessage() {

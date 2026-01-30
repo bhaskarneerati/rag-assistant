@@ -51,7 +51,16 @@ class SessionManager:
         if force_new or not provided_session_id:
             session_id = str(uuid.uuid4())
             self.logger.event(
-                "new_session",
+                "new_session_id_generated",
+                session_id=session_id,
+            )
+            self.logger.event(
+                "session_initialized",
+                session_id=session_id,
+                message="User clicked the bot icon and session was created."
+            )
+            self.logger.event(
+                "bot_waiting_for_input",
                 session_id=session_id,
             )
             return session_id

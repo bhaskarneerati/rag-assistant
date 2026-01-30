@@ -6,6 +6,10 @@ document embeddings. It handles model initialization, document chunking,
 idempotent ingestion, and semantic search.
 """
 import os
+
+# Disable ChromaDB telemetry before any other imports
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+
 from typing import List, Dict, Any
 
 import chromadb
@@ -84,7 +88,7 @@ class VectorDB:
             device=device,
         )
 
-    def add_documents(self, documents: List[Dict[str, Any]]) -> int:
+    def add_documents(self, documents: List[Dict[str, Any]], verbose: bool = False) -> int:
         """
         Chunks and inserts multiple documents into the vector database.
 
@@ -94,6 +98,7 @@ class VectorDB:
         Args:
             documents (List[Dict[str, Any]]): A list of dictionaries, where each dict
                 contains 'id' (filename), 'text' (content), and 'metadata'.
+            verbose (bool): If True, prints progress details to the console.
 
         Returns:
             int: The total number of new chunks added to the collection.
@@ -112,8 +117,9 @@ class VectorDB:
 
         for doc in documents:
             chunks = self.splitter.split_text(doc["text"])
+            num_chunks = len(chunks)
 
-            ids = [f"{doc['id']}_chunk_{i}" for i in range(len(chunks))]
+            ids = [f"{doc['id']}_chunk_{i}" for i in range(num_chunks)]
             metadatas = [doc.get("metadata", {}) for _ in chunks]
 
             # 2️⃣ Filter only NEW chunks
@@ -126,20 +132,31 @@ class VectorDB:
                     new_chunks.append(chunks[i])
                     new_ids.append(chunk_id)
                     new_metas.append(metadatas[i])
+                elif verbose:
+                    print(f"  ⏭️  Chunk {i+1}/{num_chunks} already exists, skipping.")
 
             if not new_chunks:
                 continue
 
             # 3️⃣ Embed only NEW chunks
+            if verbose:
+                print(f"  🏗️  Indexing {len(new_chunks)} new chunks for {doc['id']}...")
+            
             embeddings = self.embeddings.embed_documents(new_chunks)
 
             # 4️⃣ Add to Chroma
-            self.collection.add(
-                documents=new_chunks,
-                embeddings=embeddings,
-                metadatas=new_metas,
-                ids=new_ids,
-            )
+            for i, (chunk, chunk_id, meta, embedding) in enumerate(zip(new_chunks, new_ids, new_metas, embeddings)):
+                if verbose:
+                    # Find original chunk index for logging
+                    orig_idx = int(chunk_id.split("_")[-1]) + 1
+                    print(f"    ✅ Chunk {orig_idx}/{num_chunks} indexed.")
+                
+                self.collection.add(
+                    documents=[chunk],
+                    embeddings=[embedding],
+                    metadatas=[meta],
+                    ids=[chunk_id],
+                )
 
             total_chunks_added += len(new_chunks)
             existing_ids.update(new_ids)

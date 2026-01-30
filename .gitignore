@@ -154,9 +154,20 @@ backend/logs/*.log
 backend/chroma_db/
 backend/chats/
 
-# Knowledge Base (Only sample.txt is allowed)
+# Knowledge Base (Allow only samples in subfolders)
 knowledge_base/raw/*
-!knowledge_base/raw/sample.txt
+!knowledge_base/raw/txt/
+!knowledge_base/raw/md/
+!knowledge_base/raw/pdf/
+
+knowledge_base/raw/txt/*
+!knowledge_base/raw/txt/sample.txt
+
+knowledge_base/raw/md/*
+!knowledge_base/raw/md/sample.md
+
+knowledge_base/raw/pdf/*
+!knowledge_base/raw/pdf/sample.pdf
 
 # IDEs
 .vscode/

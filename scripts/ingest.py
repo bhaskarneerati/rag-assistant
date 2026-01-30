@@ -8,6 +8,13 @@ running the FastAPI server.
 Usage:
     python scripts/ingest.py
 """
+import os
+import warnings
+
+# Disable ChromaDB telemetry and suppress warnings
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 from app.core.rag_engine import RAGEngine
 
 def main():

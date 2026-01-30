@@ -5,6 +5,12 @@ This module initializes the FastAPI app, configures CORS middleware for local de
 and includes the API routers for health checks, chat functionality, and document ingestion.
 """
 import os
+import warnings
+
+# Disable ChromaDB telemetry and suppress warnings
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles

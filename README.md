@@ -51,7 +51,10 @@ graph TD
 │   ├── widget/              # Premium styling & logic
 │   └── demo/                # Local testing page
 ├── knowledge_base/
-│   └── raw/                 # 📂 DROP YOUR FILES HERE
+│   └── raw/
+│       ├── txt/             # .txt documents
+│       ├── md/              # .md documents
+│       └── pdf/             # .pdf documents
 ├── scripts/                 # CLI tools for ingestion & reset
 └── README.md
 ```
@@ -86,7 +89,7 @@ cp .env.example .env
 ```
 
 ### 3. Knowledge Ingestion
-Place your `.txt` files in `knowledge_base/raw/`, then run:
+Place your documents in `knowledge_base/raw/` (under `txt/`, `md/`, or `pdf/` subfolders), then run:
 ```bash
 PYTHONPATH=backend python scripts/ingest.py
 ```

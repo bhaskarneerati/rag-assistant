@@ -88,30 +88,79 @@ class RAGEngine:
         """
         Loads local documents and indexes them in the vector database.
 
-        Scans the 'knowledge_base/raw' directory for .txt files, reads their content,
-        and adds them to ChromaDB.
+        Scans 'knowledge_base/raw/txt', 'knowledge_base/raw/md', and 'knowledge_base/raw/pdf'
+        for documents, reads their content, and adds them to ChromaDB.
 
         Returns:
             Dict[str, int]: A dictionary with counts of 'documents' and 'chunks' processed.
         """
         base_path = "knowledge_base/raw"
-        documents = []
+        total_docs = 0
+        total_chunks = 0
+        
+        # Define supported folders and their expected extensions
+        supported_types = {
+            "txt": [".txt"],
+            "md": [".md"],
+            "pdf": [".pdf"]
+        }
 
-        for filename in os.listdir(base_path):
-            if filename.endswith(".txt"):
-                path = os.path.join(base_path, filename)
-                with open(path, "r", encoding="utf-8") as f:
-                    text = f.read().strip()
-                    if text:
-                        documents.append(
-                            {
-                                "id": filename,
+        for folder, extensions in supported_types.items():
+            folder_path = os.path.join(base_path, folder)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path, exist_ok=True)
+                continue
+                
+            for filename in os.listdir(folder_path):
+                if any(filename.lower().endswith(ext) for ext in extensions):
+                    path = os.path.join(folder_path, filename)
+                    text = ""
+                    
+                    print(f"📄 Processing: {folder}/{filename}...", end=" ", flush=True)
+                    try:
+                        if filename.lower().endswith(".pdf"):
+                            from pypdf import PdfReader
+                            reader = PdfReader(path)
+                            for page in reader.pages:
+                                page_text = page.extract_text()
+                                if page_text:
+                                    text += page_text + "\n"
+                        else:
+                            with open(path, "r", encoding="utf-8") as f:
+                                text = f.read().strip()
+                        
+                        if text.strip():
+                            print("Done.")
+                            doc_data = {
+                                "id": f"{folder}/{filename}",
                                 "text": text,
-                                "metadata": {"source": filename},
+                                "metadata": {
+                                    "source": filename,
+                                    "type": folder,
+                                    "path": path
+                                },
                             }
+                            # Index this document immediately to keep logs in order
+                            chunks = self.vector_db.add_documents([doc_data], verbose=True)
+                            total_docs += 1
+                            total_chunks += chunks
+                        else:
+                            print("Skipped (Empty).")
+                    except Exception as e:
+                        print(f"Error: {str(e)}")
+                        self.logger.event(
+                            "document_load_error",
+                            file=filename,
+                            error=str(e)
                         )
 
-        chunks = self.vector_db.add_documents(documents)
+        self.logger.event(
+            "ingestion_complete",
+            documents=total_docs,
+            chunks=total_chunks,
+        )
+
+        return {"documents": total_docs, "chunks": total_chunks}
 
         self.logger.event(
             "ingestion_complete",
